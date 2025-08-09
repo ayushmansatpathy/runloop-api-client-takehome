@@ -10,6 +10,7 @@ Task 1:
 
 import os
 from pathlib import Path
+import time
 from client import get_client, get_email
 from utils import save_answers, upload_directory, await_devbox_running, run_stateful
 
@@ -24,6 +25,7 @@ def main():
 
     # 1.a: Create devbox named your email
     dev = client.devboxes.create(name=email)
+
     devbox_id = dev.id
     print("Created devbox:", devbox_id)
     await_devbox_running(client, devbox_id)

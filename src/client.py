@@ -1,10 +1,13 @@
 import os
 from typing import Optional
 from runloop_api_client import Runloop
+from dotenv import load_dotenv
 
-BASE_URL = os.environ.get("RUNLOOP_BASE_URL", "https://api.runloop.pro")
+load_dotenv()
+
+BASE_URL = "https://api.runloop.pro"
 API_KEY = os.environ.get("RUNLOOP_API_KEY")
-RUNLOOP_EMAIL = "asatpathy@umass.edu"
+RUNLOOP_EMAIL = os.environ.get("RUNLOOP_EMAIL")
 
 
 def get_client() -> Runloop:
