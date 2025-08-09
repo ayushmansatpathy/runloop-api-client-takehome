@@ -44,7 +44,6 @@ def main():
     email = get_email()
 
     # Create a scenario with a basic “scoring contract”
-    # If SDK expects you to upload code for scorer, you can inline a trivial spec.
     scenario = client.scenarios.create(
         name=f"{email}-ext-scenario",
         scoring_contract={

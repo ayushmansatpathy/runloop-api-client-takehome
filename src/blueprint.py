@@ -2,29 +2,22 @@
 Task 2:
 - Create a blueprint that has 'cowsay' installed.
 - Boot a devbox from the blueprint and run 'cowsay' to produce output.
-- Save a screenshot 'blueprint.png' (we'll capture terminal output and render it into a PNG).
 - Update answers.json with blueprint name/id and the devbox from blueprint id/name.
-
-Note: If the platform exposes a true 'screenshot' API for terminals/browsers, use it.
-Here we render stdout to a PNG so the repo contains a visible artifact.
+- Take screenshot of devbox and upload it as blueprint.png
 """
 
 from pathlib import Path
-import textwrap
 import time
 
 from client import get_client, get_email
 from utils import save_answers, await_devbox_running, run_stateful
-
-OUT_IMAGE = Path(__file__).resolve().parents[1] / "blueprint.png"
 
 
 def main():
     client = get_client()
     email = get_email()
 
-    # Create blueprint with cowsay
-    # Many platforms do blueprints as "base image + provisioning script". Here we use a simple shell provision.
+    # create blueprint
     blueprint_name = f"{email}-cowsay-blueprint"
     bp = client.blueprints.create(
         name=blueprint_name,
@@ -39,7 +32,9 @@ def main():
         }
     )
 
-    time.sleep(20)
+    time.sleep(
+        20
+    )  # added delay to ensure blueprint was up and running, can have cleaner solution like await_devbox_running
 
     # Boot a devbox from blueprint
     dev_from_bp = client.devboxes.create(
@@ -55,7 +50,7 @@ def main():
         }
     )
 
-    # Run cowsay
+    # Install cowsay
     res = client.devboxes.execute_sync(
         id=devbox_id, command="pip install cowsay", shell_name="bp-shell"
     )
