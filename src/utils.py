@@ -30,31 +30,65 @@ def save_answers(update: Dict) -> None:
     ANSWERS_PATH.write_text(json.dumps(data, indent=2))
 
 
+TEXT_EXTS = {
+    ".txt",
+    ".py",
+    ".js",
+    ".json",
+    ".md",
+    ".yml",
+    ".yaml",
+    ".sh",
+    ".cfg",
+    ".ini",
+}
+
+
 def upload_directory(client, devbox_id: str, local_dir: Path, remote_root: str) -> None:
     """
     Recursively uploads `local_dir` into devbox under `remote_root`.
+    - Text files -> devboxes.write_file_contents (expects a STRING)
+    - Non-text / undecodable -> devboxes.upload_file
     """
     for path in local_dir.rglob("*"):
         rel = path.relative_to(local_dir)
         remote_path = f"{remote_root}/{rel.as_posix()}"
+
         if path.is_dir():
-            # For many SDKs, writing a directory isn't necessary; ensure parents by 'mkdir -p'
             client.devboxes.execute_sync(
                 id=devbox_id,
                 command=f"mkdir -p '{remote_path}'",
                 shell_name="upload-shell",
             )
             continue
-        # write file
-        contents = path.read_bytes()
-        # ensure parent dir exists
+
+        # Ensure parent dir exists on the devbox
         parent = "/".join(remote_path.split("/")[:-1])
         client.devboxes.execute_sync(
             id=devbox_id, command=f"mkdir -p '{parent}'", shell_name="upload-shell"
         )
-        client.devboxes.write_file_contents(
-            id=devbox_id, file_path=remote_path, contents=contents
-        )
+
+        # Prefer write_file_contents for text (send STRING, not bytes)
+        if path.suffix.lower() in TEXT_EXTS:
+            text = path.read_text(encoding="utf-8", errors="strict")
+            client.devboxes.write_file_contents(
+                id=devbox_id,
+                file_path=remote_path,
+                contents=text,  # must be str
+            )
+        else:
+            # Not a known text file — try text decode, else upload as binary
+            try:
+                text = path.read_text(encoding="utf-8", errors="strict")
+                client.devboxes.write_file_contents(
+                    id=devbox_id,
+                    file_path=remote_path,
+                    contents=text,
+                )
+            except UnicodeDecodeError:
+                # Use the binary helper for arbitrary files
+                # (destination path behavior depends on SDK; many put it under working dir)
+                client.devboxes.upload_file(id=devbox_id, path=str(path))
 
 
 def await_devbox_running(client, devbox_id: str, timeout_s: int = 180) -> None:
