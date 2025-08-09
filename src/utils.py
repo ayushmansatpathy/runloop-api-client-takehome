@@ -53,8 +53,6 @@ def upload_directory(client, devbox_id: str, local_dir: Path, remote_root: str) 
     for path in local_dir.rglob("*"):
         rel = path.relative_to(local_dir)
         remote_path = f"{remote_root}/{rel.as_posix()}"
-        print(rel)
-        print(remote_path)
         if path.is_dir():
             client.devboxes.execute_sync(
                 id=devbox_id,
@@ -65,7 +63,6 @@ def upload_directory(client, devbox_id: str, local_dir: Path, remote_root: str) 
 
         # Ensure parent dir exists on the devbox
         parent = "/".join(remote_path.split("/")[:-1])
-        print(parent)
         client.devboxes.execute_sync(
             id=devbox_id, command=f"mkdir -p '{parent}'", shell_name="upload-shell"
         )

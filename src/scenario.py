@@ -13,6 +13,7 @@ Notes:
 
 import os
 from pathlib import Path
+import time
 from client import get_client, get_email
 from utils import save_answers, upload_directory, await_devbox_running, run_stateful
 
@@ -93,22 +94,21 @@ def main():
             "additional_context": {},
         },
     )
-
     # Start scenario run targeting our devbox
-    run = client.scenarios.runs.create(
+    run = client.scenarios.start_run(
         scenario_id=scenario.id,
-        target_devbox_id=devbox_id,
     )
+    time.sleep(3)
 
-    client.scenarios.runs.score(
+    score_id = client.scenarios.runs.score(
         id=run.id,
     )
-
+    time.sleep(3)
     # Mark scenario run complete (some SDKs combine score+complete)
-    client.scenarios.runs.complete(run_id=run.id)
+    complete_id = client.scenarios.runs.complete(id=run.id)
 
-    save_answers({"ext-scenario-run-id": run.id})
-    print("Scenario run id:", run.id, "score:", score)
+    save_answers({"ext-scenario-run-id": complete_id.id})
+    print("Scenario run id:", run.id, "score:", score_id.id)
 
 
 if __name__ == "__main__":
