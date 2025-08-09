@@ -31,7 +31,6 @@ def main():
     # Record api-key (from env), devbox-name, devbox-id
     save_answers(
         {
-            "api-key": "ak_30hvRVAwHQOVjXJ2e8iYQ",
             "devbox-name": email,
             "devbox-id": devbox_id,
         }

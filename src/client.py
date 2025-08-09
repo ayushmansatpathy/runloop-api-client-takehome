@@ -3,14 +3,14 @@ from typing import Optional
 from runloop_api_client import Runloop
 
 BASE_URL = os.environ.get("RUNLOOP_BASE_URL", "https://api.runloop.pro")
-API_KEY = "apk_30hvBZrKRIzew1DYBFcnY"
-RUNLOOP_EMAIL = "ayushmansatpathy1234@gmail.com"
+API_KEY = os.environ.get("RUNLOOP_API_KEY")
+RUNLOOP_EMAIL = "asatpathy@umass.edu"
 
 
 def get_client() -> Runloop:
     if not API_KEY:
         raise RuntimeError("RUNLOOP_API_KEY not set.")
-    return Runloop(base_url=BASE_URL, bearer_token="ak_30hvRVAwHQOVjXJ2e8iYQ")
+    return Runloop(base_url=BASE_URL, bearer_token=API_KEY)
 
 
 def get_email() -> str:

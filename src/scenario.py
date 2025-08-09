@@ -18,7 +18,7 @@ from utils import save_answers, upload_directory, await_devbox_running, run_stat
 
 RESOURCES_DIR = Path(__file__).resolve().parents[1] / "resources"
 REMOTE_ROOT = "/workspace"
-REMOTE_RESOURCES = f"{REMOTE_ROOT}/resources"
+REMOTE_RESOURCES = f"resources"
 
 
 def resources_exist(client, devbox_id: str) -> bool:
@@ -52,7 +52,7 @@ def main():
     client.devboxes.write_file_contents(
         id=devbox_id,
         file_path=f"{REMOTE_RESOURCES}/me.txt",
-        contents=(email + "\n").encode("utf-8"),
+        contents=email,
     )
 
     # Run test script (same as Task 1.b)
@@ -70,9 +70,28 @@ def main():
     # If SDK expects you to upload code for scorer, you can inline a trivial spec.
     scenario = client.scenarios.create(
         name=f"{email}-ext-scenario",
-        description="Checks for presence of /workspace/resources and its files.",
-        # Arbitrary metadata; adjust based on SDK
-        scoring_contract="presence_check_resources",
+        scoring_contract={
+            "scoring_function_parameters": [
+                {
+                    "name": "resources_checker",
+                    "scorer": {
+                        "type": "bash_script_scorer",
+                        "bash_script": """
+                        if [ -f "resources/me.txt" ] && [ -f "resources/test.py" ] && [ -f "resources/test.js" ]; then
+                          echo "1.0"
+                        else
+                          echo "0.0"
+                        fi
+                    """,
+                    },
+                    "weight": 1.0,
+                }
+            ]
+        },
+        input_context={
+            "problem_statement": "Check presence of /resources and its files",
+            "additional_context": {},
+        },
     )
 
     # Start scenario run targeting our devbox
@@ -81,19 +100,8 @@ def main():
         target_devbox_id=devbox_id,
     )
 
-    # Compute local score (simple presence check) and submit to platform
-    score = 1.0 if resources_exist(client, devbox_id) else 0.0
-
-    client.scenarios.runs.submit_score(
-        run_id=run.id,
-        score=score,
-        details={
-            "reason": (
-                "Found required files in /workspace/resources"
-                if score == 1.0
-                else "Missing files"
-            )
-        },
+    client.scenarios.runs.score(
+        id=run.id,
     )
 
     # Mark scenario run complete (some SDKs combine score+complete)
