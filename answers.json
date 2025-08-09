@@ -1,11 +1,11 @@
 {
-  "api-key": "YOUR_RUNLOOP_API_KEY",
+  "api-key": "ak_30hvBZr2R6fewTMve83Iu",
   "devbox-name": "YOUR_DEVBOX_NAME",
   "devbox-id": "YOUR_DEVBOX_ID",
   "snapshot-id": "YOUR_SNAPSHOT_ID",
   "blueprint-name": "YOUR_BLUEPRINT_NAME",
   "blueprint-id": "YOUR_BLUEPRINT_ID",
-  "devbox-from-blueprint-id": "YOUR_BLUEPRINT_DEVBOX_ID", 
+  "devbox-from-blueprint-id": "YOUR_BLUEPRINT_DEVBOX_ID",
   "devbox-from-blueprint-name": "YOUR_BLUEPRINT_DEVBOX_NAME",
   "ext-scenario-run-id": "YOUR_SCENARIO_RUN_ID"
 }
