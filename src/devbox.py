@@ -15,7 +15,7 @@ from utils import save_answers, upload_directory, await_devbox_running, run_stat
 
 RESOURCES_DIR = Path(__file__).resolve().parents[1] / "resources"
 REMOTE_ROOT = "/workspace"
-REMOTE_RESOURCES = f"{REMOTE_ROOT}/resources"
+REMOTE_RESOURCES = f"resources"
 
 
 def main():
@@ -36,7 +36,7 @@ def main():
             "devbox-id": devbox_id,
         }
     )
-
+    print(RESOURCES_DIR)
     # 1.b: Copy resources/ to devbox under /workspace/resources
     upload_directory(client, devbox_id, RESOURCES_DIR, REMOTE_RESOURCES)
 
@@ -44,7 +44,7 @@ def main():
     client.devboxes.write_file_contents(
         id=devbox_id,
         file_path=f"{REMOTE_RESOURCES}/me.txt",
-        contents=(email + "\n").encode("utf-8"),
+        contents=email,
     )
 
     # Execute one of the test scripts (prefer Python; fallback to Node)

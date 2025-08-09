@@ -48,9 +48,16 @@ def main():
     devbox_id = dev_from_bp.id
     await_devbox_running(client, devbox_id)
 
+    save_answers(
+        {
+            "devbox-from-blueprint-id": devbox_id,
+            "devbox-from-blueprint-name": dev_from_bp.name,
+        }
+    )
+
     # Run cowsay
     res = client.devboxes.execute_sync(
-        id=devbox_id, command="cowsay 'Runloop!'", shell_name="bp-shell"
+        id=devbox_id, command="pip install cowsay", shell_name="bp-shell"
     )
     cowsay_output = getattr(res, "stdout", "") or ""
     if isinstance(cowsay_output, bytes):

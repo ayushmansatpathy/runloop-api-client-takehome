@@ -1,11 +1,11 @@
 {
   "api-key": "ak_30hvRVAwHQOVjXJ2e8iYQ",
   "devbox-name": "ayushmansatpathy1234@gmail.com",
-  "devbox-id": "dbx_30hvcBeH9agLxxSJ2J2CB",
-  "snapshot-id": "snp_30hvht6aCeOaHoMTqn9Wb",
+  "devbox-id": "dbx_30hwh9jRssS2sOvMVq3mE",
+  "snapshot-id": "snp_30hwhEF1Obdwc0lYvTThB",
   "blueprint-name": "ayushmansatpathy1234@gmail.com-cowsay-blueprint",
-  "blueprint-id": "bpt_30hw8T5L041CIMmzq8wJ0",
-  "devbox-from-blueprint-id": "dbx_30hw8z6WA6IXS09INHBix",
+  "blueprint-id": "bpt_30hwFN6FYKi896IduiW5b",
+  "devbox-from-blueprint-id": "dbx_30hwFtF2I0wbnSsmgGXi1",
   "devbox-from-blueprint-name": "ayushmansatpathy1234@gmail.com-from-bp",
   "ext-scenario-run-id": "YOUR_SCENARIO_RUN_ID"
 }
