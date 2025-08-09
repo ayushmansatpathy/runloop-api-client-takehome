@@ -43,30 +43,6 @@ def main():
     client = get_client()
     email = get_email()
 
-    # Create a fresh devbox for the scenario
-    dev = client.devboxes.create(name=f"{email}-scenario")
-    devbox_id = dev.id
-    await_devbox_running(client, devbox_id)
-
-    # Copy resources to devbox & edit me.txt
-    upload_directory(client, devbox_id, RESOURCES_DIR, REMOTE_RESOURCES)
-    client.devboxes.write_file_contents(
-        id=devbox_id,
-        file_path=f"{REMOTE_RESOURCES}/me.txt",
-        contents=email,
-    )
-
-    # Run test script (same as Task 1.b)
-    run_stateful(
-        client,
-        devbox_id,
-        [
-            f"mkdir -p {REMOTE_ROOT}",
-            f"cd {REMOTE_ROOT}",
-            f"python {REMOTE_RESOURCES}/test.py || node {REMOTE_RESOURCES}/test.js",
-        ],
-    )
-
     # Create a scenario with a basic “scoring contract”
     # If SDK expects you to upload code for scorer, you can inline a trivial spec.
     scenario = client.scenarios.create(
@@ -94,21 +70,38 @@ def main():
             "additional_context": {},
         },
     )
+
     # Start scenario run targeting our devbox
-    run = client.scenarios.start_run(
-        scenario_id=scenario.id,
+    run = client.scenarios.start_run(scenario_id=scenario.id)
+    dev_id = run.devbox_id
+    await_devbox_running(client, dev_id)
+
+    # Copy resources to devbox & edit me.txt
+    upload_directory(client, dev_id, RESOURCES_DIR, REMOTE_RESOURCES)
+    client.devboxes.write_file_contents(
+        id=dev_id,
+        file_path=f"{REMOTE_RESOURCES}/me.txt",
+        contents=email,
+    )
+
+    # Run test script (same as Task 1.b)
+    run_stateful(
+        client,
+        dev_id,
+        [
+            f"mkdir -p {REMOTE_ROOT}",
+            f"cd {REMOTE_ROOT}",
+            f"python {REMOTE_RESOURCES}/test.py || node {REMOTE_RESOURCES}/test.js",
+        ],
     )
     time.sleep(3)
-
-    score_id = client.scenarios.runs.score(
+    client.scenarios.runs.score(
         id=run.id,
     )
     time.sleep(3)
-    # Mark scenario run complete (some SDKs combine score+complete)
     complete_id = client.scenarios.runs.complete(id=run.id)
 
     save_answers({"ext-scenario-run-id": complete_id.id})
-    print("Scenario run id:", run.id, "score:", score_id.id)
 
 
 if __name__ == "__main__":
